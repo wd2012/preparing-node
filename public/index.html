@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>测试</title>
+  <style>
+    .container {
+      display: flex;
+      justify-content: center;
+    }
+    .part {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      width: 500px;
+      border: 1px solid red;
+      padding: 10px;
+    }
+    .btn {
+      padding: 10px;
+      border: 1px solid #999999;
+      border-radius: 4px;
+      color: #000;
+      cursor: pointer;
+    }
+    .btn:hover {
+      background-color: rgba(0,0,0,.2);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="part">
+      <div class="btn" onclick="saveSchema()">保存小程序至草稿箱</div>
+      <div class="btn" onclick="proxyFn()">代理</div>
+      <div class="btn" onclick="getMock()">获取测试数据</div>
+      <div class="btn" onclick="getMaterialsVersion()">获取组件库版本</div>
+      <div class="btn" onclick="getMaterialsMetaData()">获取组件库元数据</div>
+      <div class="btn" onclick="getApplicationList()">获取应用列表</div>
+      <div class="btn" onclick="createApplication()">创建应用</div>
+      <div class="btn" onclick="deleteApplication()">删除应用</div>
+      <div class="btn" onclick="getApplicationData()">获取应用数据</div>
+    </div>
+  </div>
+    <script>
+      // 请求
+      const fetchFn = async (url, options = {}) => {
+        const defaultOptions = {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          ...options,
+        };  
+        if (['POST', 'PUT'].includes(defaultOptions.method) && !defaultOptions.body) {  
+          throw new Error('POST或PUT请求必须设置body');  
+        };
+        if (defaultOptions.body && typeof defaultOptions.body === 'object') {
+          defaultOptions.body = JSON.stringify(defaultOptions.body);
+        };
+        try {
+          const response = await fetch(url);
+
+          if (!response.ok) {
+            const errorData = await response.json(); // 获取错误信息
+            throw new Error(errorData.message || '请求失败');
+          }
+
+          const data = await response.json();
+          return data;
+        } catch (error) {
+          console.error('Error fetching :', error.message);
+          // 在这里处理错误，例如显示给用户
+        }
+      };
+      
+      // 保存 schema 数据
+      const schemaData = '[{"id":"start","type":"start","title":"开始"},{"id":"73903648","type":"normal","title":"节点7744","content":"行为配置","config":{"config":{"componentId":"CLBaseButton_oj2v2bjduz","method":"showLoading"},"type":"ComponentMethod"},"children":[]},{"id":"35489679","type":"condition","title":"","content":"行为配置","config":{},"children":[{"id":"54806100","type":"success","title":"成功","content":"成功后执行此流程","children":[{"id":"43492449","type":"normal","title":"节点1297","content":"行为配置","config":{"config":{"componentId":"CLBaseButton_oj2v2bjduz","method":"show"},"type":"ComponentMethod"},"children":[]}],"config":{"config":{"title":"3333","duration":3000,"mask":true,"icon":"success"},"type":"GlobalMethod","methodId":"cbd-codelite-materials/action/CLToast"}},{"id":"49714537","type":"fail","title":"失败","content":"失败后执行此流程","children":[],"config":{"config":{"title":"4444","duration":4000,"mask":true,"icon":"success"},"type":"GlobalMethod","methodId":"cbd-codelite-materials/action/CLToast"}}]},{"id":"10318768","type":"normal","title":"节点4860","content":"行为配置","config":{"config":{"componentId":"CLBaseButton_oj2v2bjduz","method":"hideLoading"},"type":"ComponentMethod"},"children":[]},{"id":"end","type":"end","title":"结束"}]'
+      const saveSchema = async () => {
+        console.log('111111-schemaData', JSON.parse(schemaData));
+        const data = await fetchFn('/api/app/save', {
+          method: 'POST',
+          body: {
+            schema: schemaData
+          }
+        });
+        console.log('保存 schema 数据', data);
+      };
+
+      const proxyFn = async () => {
+        const data = await fetchFn('/api/app/materials/version', {
+          method: 'get',
+        });
+        console.log('proxyFn', data);
+      };
+
+
+      const getMaterialsVersion =  async () => {
+        const data = await fetchFn('/api/app/materials/version', {
+          method: 'GET',
+        });
+        console.log('获取组件库版本数据', data);
+      };
+
+      const getMaterialsMetaData =  async () => {
+        const data = await fetchFn('/api/app/materials/metadata?version=0.0.3', {
+          method: 'GET',
+        });
+        console.log('获取组件元数据', data);
+      };
+
+
+      const getApplicationList =  async () => {
+        const data = await fetchFn('/api/app/application/list', {
+          method: 'GET',
+        });
+        console.log('获取应用列表', data);
+      };
+      const getApplicationData =  async () => {
+        const data = await fetchFn('/api/app/application/data', {
+          method: 'GET',
+        });
+        console.log('获取应用数据', data);
+      };
+
+      const createApplication =  async () => {
+        const data = await fetchFn('/api/app/application/add', {
+          method: 'POST',
+          body: {
+            name: 'dadad',
+            id: 'dadada'
+          }
+        });
+        console.log('创建应用', data);
+      };
+
+      const deleteApplication =  async () => {
+        const data = await fetchFn('/api/app/application/delete', {
+          method: 'POST',
+          body: {
+            id: '1222'
+          }
+        });
+        console.log('删除应用', data);
+      };
+    </script>
+</body>
+</html>
