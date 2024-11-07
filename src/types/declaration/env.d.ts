@@ -10,5 +10,6 @@ declare namespace NodeJS {
     readonly NACOS_ENDPOINT: string;
     readonly NACOS_NAMESPACE: string;
     readonly OSS_MATERIALS_URL: string;
+    readonly OPENAI_API_KEY: string;
   }
 }
